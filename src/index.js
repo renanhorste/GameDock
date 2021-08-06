@@ -7,10 +7,14 @@ app.use(express.json());
 
 
  app.get('/projects', (request,response)=>{
-    const query = request.query;
-
-    return response.json(query);
- });
+    const {title, owner} = request.query;
+    console.log(title);
+    console.log(owner);
+    
+    return response.json({message: "resposta enviada ao servidor"});
+    
+    
+});
 
  app.post('/projects', (request,response) => {
 
