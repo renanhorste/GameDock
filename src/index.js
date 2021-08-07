@@ -1,30 +1,52 @@
+const { json } = require('express');
 const express = require('express');
-
+const {uuid} = require ('uuidv4');
 const app = express();
 
 app.use(express.json());
 
+const games = [];
 
+ app.get('/games', (request,response)=>{
 
- app.get('/projects', (request,response)=>{
-    const {title, owner} = request.query;
-    console.log(title);
-    console.log(owner);
-    
-    return response.json({message: "resposta enviada ao servidor"});
+    return response.json(games);
    });
 
- app.post('/projects', (request,response) => {
+ app.post('/games', (request,response) => {
+
    const {title, owner} = request.body;
-   console.log(title, owner);
+   const game = {id: uuid(), title, owner};
+
+   games.push(game);
+
+   return response.json(game);
+
  });
 
- app.put('/projects/:id', (request, response) => {
+ app.put('/games/:id', (request, response) => {
+
    const {id} = request.params;
-   console.log(id);
+   const {title, owner} = request.body;
+
+   const gameIndex = games.findIndex(game => game.id == id);
+
+  if (gameIndex<0){
+    return response.status(400).json({error: "Console não encontrado"});
+  }
+  
+  const game = {
+    id,
+    title,
+    owner
+  }
+
+  games[gameIndex] = game;
+
+  return response.json(game);
+
  });
 
- app.delete('/projects/:id', (request, response) => {
+ app.delete('/games/:id', (request, response) => {
 
  });
 
