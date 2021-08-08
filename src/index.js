@@ -8,8 +8,13 @@ app.use(express.json());
 const games = [];
 
  app.get('/games', (request,response)=>{
+    const {title} = request.query;
 
-    return response.json(games);
+    const results = title
+      ? games.filter(game => game.title.includes(title))
+      : games;
+
+    return response.json(results);
    });
 
  app.post('/games', (request,response) => {
@@ -47,6 +52,16 @@ const games = [];
  });
 
  app.delete('/games/:id', (request, response) => {
+    const {id} = request.params;
+    const gameIndex = games.findIndex(game => game.id == id);
+    if (gameIndex <0 ){
+      return response.status(400).jsonjson({error: "Console nao encontrado"});
+
+    }
+
+    games.splice(gameIndex,1);
+
+    return response.status(204).send();
 
  });
 
