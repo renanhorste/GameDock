@@ -7,6 +7,15 @@ app.use(express.json());
 
 const games = [];
 
+function logRequest(request, response, next){
+  const {method, url} = request;
+  const logLabel = `[${method.toUpperCase()}] ${url}`;
+  console.log(logLabel);
+  return next();
+}
+
+  app.use(logRequest);
+
  app.get('/games', (request,response)=>{
     const {title} = request.query;
 
