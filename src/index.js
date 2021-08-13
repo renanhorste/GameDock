@@ -1,6 +1,6 @@
-const { json } = require('express');
+//const { json } = require('express');
 const express = require('express');
-const {uuid} = require ('uuidv4');
+const {uuid, isUuid} = require ('uuidv4');
 const app = express();
 
 app.use(express.json());
@@ -10,7 +10,20 @@ const games = [];
 function logRequest(request, response, next){
   const {method, url} = request;
   const logLabel = `[${method.toUpperCase()}] ${url}`;
-  console.log(logLabel);
+
+  console.time(logLabel);
+
+  next(); //next middleware
+
+  console.timeEnd(logLabel);
+}
+
+
+function validadeProjectId(request,response,next){
+  const {id} = request.params;
+  if (!isUuid(id)){ // se não for o ID 
+      return response.status(400).json({error: "invalid project ID"})
+  }
   return next();
 }
 
@@ -37,7 +50,7 @@ function logRequest(request, response, next){
 
  });
 
- app.put('/games/:id', (request, response) => {
+ app.put('/games/:id',validadeProjectId, (request, response) => {
 
    const {id} = request.params;
    const {title, owner} = request.body;
@@ -60,7 +73,7 @@ function logRequest(request, response, next){
 
  });
 
- app.delete('/games/:id', (request, response) => {
+ app.delete('/games/:id',validadeProjectId, (request, response) => {
     const {id} = request.params;
     const gameIndex = games.findIndex(game => game.id == id);
     if (gameIndex <0 ){
