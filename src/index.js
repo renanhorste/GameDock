@@ -4,6 +4,7 @@ const {uuid, isUuid} = require ('uuidv4');
 const app = express();
 
 app.use(express.json());
+app.use('/games/:id', validateGamesId);
 
 const games = [];
 
@@ -19,10 +20,10 @@ function logRequest(request, response, next){
 }
 
 
-function validadeProjectId(request,response,next){
+function validateGamesId(request,response,next){
   const {id} = request.params;
   if (!isUuid(id)){ // se não for o ID 
-      return response.status(400).json({error: "invalid project ID"})
+      return response.status(400).json({error: "invalid game ID"})
   }
   return next();
 }
@@ -50,7 +51,7 @@ function validadeProjectId(request,response,next){
 
  });
 
- app.put('/games/:id',validadeProjectId, (request, response) => {
+ app.put('/games/:id',(request, response) => {
 
    const {id} = request.params;
    const {title, owner} = request.body;
@@ -73,7 +74,7 @@ function validadeProjectId(request,response,next){
 
  });
 
- app.delete('/games/:id',validadeProjectId, (request, response) => {
+ app.delete('/games/:id',(request, response) => {
     const {id} = request.params;
     const gameIndex = games.findIndex(game => game.id == id);
     if (gameIndex <0 ){
